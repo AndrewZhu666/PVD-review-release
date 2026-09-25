@@ -1,0 +1,289 @@
+{
+  "schema_version": 1,
+  "benchmark": "maniskill",
+  "assets": [
+    {
+      "id": "base_model",
+      "kind": "model",
+      "description": "PI0.5 ManiSkill student initialization used by the paper runs.",
+      "required": true,
+      "used_by": ["train", "evaluate"],
+      "location": {
+        "type": "user_parameter",
+        "parameter": "maniskill_base_model",
+        "relative_path": null,
+        "public_url_status": "known",
+        "public_url": "https://huggingface.co/RLinf/RLinf-Pi05-ManiSkill-25Main-SFT",
+        "revision_status": "known",
+        "revision": "eb0e2c90726f7f0bdf99e8c9b6656917f0eb5030",
+        "artifact_path": "model.safetensors"
+      },
+      "license": {"status": "unknown", "identifier": null},
+      "integrity": {
+        "status": "known",
+        "sha256": "9877be1633a9bc89834d00ef890e1a4cd34a91c155d710b97c92fbab8a5caa89"
+      },
+      "expected_filename": "model.safetensors",
+      "selector": null
+    },
+    {
+      "id": "frozen_teacher",
+      "kind": "model",
+      "description": "Frozen actor-only FlowSDE teacher used by both training methods.",
+      "required": true,
+      "used_by": ["train"],
+      "location": {
+        "type": "user_parameter",
+        "parameter": "maniskill_frozen_teacher",
+        "relative_path": null,
+        "public_url_status": "known",
+        "public_url": "https://huggingface.co/RLinf/RLinf-Pi05-ManiSkill-25Main-RL-FlowSDE",
+        "revision_status": "known",
+        "revision": "a791196be19a4d35094e1e7eaf4984da3a0ec5ba",
+        "artifact_path": "actor/model.safetensors"
+      },
+      "license": {"status": "unknown", "identifier": null},
+      "integrity": {
+        "status": "known",
+        "sha256": "8445f7c3e5dcfa6d42623b2ce975c94280630a12513f2543584afaf84733cbdf"
+      },
+      "expected_filename": "model.safetensors",
+      "selector": null
+    },
+    {
+      "id": "normalization_stats",
+      "kind": "normalization_stats",
+      "description": "Normalization statistics paired with the recorded ManiSkill models.",
+      "required": true,
+      "used_by": ["train", "evaluate"],
+      "location": {
+        "type": "user_parameter",
+        "parameter": "maniskill_normalization_stats",
+        "relative_path": null,
+        "public_url_status": "known",
+        "public_url": "https://huggingface.co/RLinf/RLinf-Pi05-ManiSkill-25Main-SFT",
+        "artifact_path": "physical-intelligence/maniskill/norm_stats.json",
+        "revision_status": "known",
+        "revision": "eb0e2c90726f7f0bdf99e8c9b6656917f0eb5030"
+      },
+      "license": {"status": "unknown", "identifier": null},
+      "integrity": {
+        "status": "known",
+        "algorithm": "sha256_canonical_json",
+        "sha256": "229cea8fece49762eb8c940e95c0e33b62a3f0473ee9085a9e519cdab6dccdd5"
+      },
+      "expected_filename": "norm_stats.json",
+      "selector": null
+    },
+    {
+      "id": "teacher_normalization_stats",
+      "kind": "normalization_stats",
+      "description": "Normalization statistics paired with the frozen ManiSkill FlowSDE teacher; the CLI falls back to the student file only for legacy invocations.",
+      "required": true,
+      "used_by": ["train"],
+      "location": {
+        "type": "user_parameter",
+        "parameter": "maniskill_teacher_normalization_stats",
+        "relative_path": null,
+        "public_url_status": "known",
+        "public_url": "https://huggingface.co/RLinf/RLinf-Pi05-ManiSkill-25Main-RL-FlowSDE",
+        "artifact_path": "actor/assets/global_step_150/meta/norm_stats.json",
+        "revision_status": "known",
+        "revision": "a791196be19a4d35094e1e7eaf4984da3a0ec5ba"
+      },
+      "license": {"status": "unknown", "identifier": null},
+      "integrity": {
+        "status": "known",
+        "algorithm": "sha256_file",
+        "sha256": "930b816bf2f142f3e377d088d2252e5238b8d082ad8f0abceedfc6296be58852"
+      },
+      "expected_filename": "norm_stats.json",
+      "selector": null
+    },
+    {
+      "id": "simulator_assets",
+      "kind": "environment_assets",
+      "description": "Simulator assets required by the benchmark task.",
+      "required": true,
+      "used_by": ["train", "evaluate", "reproduce_paper_results"],
+      "location": {
+        "type": "user_parameter",
+        "parameter": "maniskill_simulator_assets",
+        "relative_path": null,
+        "public_url_status": "known",
+        "public_url": "https://huggingface.co/datasets/RLinf/maniskill_assets",
+        "revision_status": "known",
+        "revision": "c23fc1880ed7861686d4f995360101eaee4d18a0"
+      },
+      "license": {"status": "unknown", "identifier": null},
+      "integrity": {"status": "unknown", "sha256": null},
+      "expected_filename": null,
+      "selector": null
+    },
+    {
+      "id": "package_assets",
+      "kind": "environment_assets",
+      "description": "ManiSkill package asset cache used through MS_ASSET_DIR; this is distinct from RLinf task assets.",
+      "required": true,
+      "used_by": ["train", "evaluate", "reproduce_paper_results"],
+      "location": {
+        "type": "user_parameter",
+        "parameter": "maniskill_package_assets",
+        "relative_path": null,
+        "public_url_status": "unknown",
+        "public_url": null
+      },
+      "license": {"status": "unknown", "identifier": null},
+      "integrity": {"status": "unknown", "sha256": null},
+      "expected_filename": null,
+      "selector": null
+    },
+    {
+      "id": "evaluation_panel",
+      "kind": "evaluation_panel",
+      "description": "Fixed 320-row reset panel used for the paper evaluation.",
+      "required": true,
+      "used_by": ["evaluate", "reproduce_paper_results"],
+      "location": {
+        "type": "user_parameter",
+        "parameter": "maniskill_evaluation_panel",
+        "relative_path": null,
+        "public_url_status": "unknown",
+        "public_url": null
+      },
+      "license": {"status": "unknown", "identifier": null},
+      "integrity": {
+        "status": "known",
+        "sha256": "b0e19481f6cbf38013ebd243bdc681f6b9dba7a9e9f8f94d02549bb4714d69d0"
+      },
+      "expected_filename": "panel_320.json",
+      "selector": null
+    },
+    {
+      "id": "checkpoint_endpoint_dagger_seed_0",
+      "kind": "paper_checkpoint",
+      "description": "Endpoint-DAgger final checkpoint for training seed 0.",
+      "required": true,
+      "used_by": ["reproduce_paper_results"],
+      "location": {
+        "type": "user_parameter",
+        "parameter": "maniskill_checkpoint_endpoint_dagger_seed_0",
+        "relative_path": null,
+        "public_url_status": "unknown",
+        "public_url": null
+      },
+      "license": {"status": "unknown", "identifier": null},
+      "integrity": {
+        "status": "known",
+        "sha256": "ce02b5d68760f04d3c9980d93c288cbf4e6194e712509325c7201dfe120cccf6"
+      },
+      "expected_filename": "checkpoint.pt",
+      "selector": {"training_seed": 0, "method": "endpoint_dagger"}
+    },
+    {
+      "id": "checkpoint_path_opd_seed_0",
+      "kind": "paper_checkpoint",
+      "description": "Path-OPD final checkpoint for training seed 0.",
+      "required": true,
+      "used_by": ["reproduce_paper_results"],
+      "location": {
+        "type": "user_parameter",
+        "parameter": "maniskill_checkpoint_path_opd_seed_0",
+        "relative_path": null,
+        "public_url_status": "unknown",
+        "public_url": null
+      },
+      "license": {"status": "unknown", "identifier": null},
+      "integrity": {
+        "status": "known",
+        "sha256": "f9c08abca320b95215d08ba4a3e9c6a56c89ca9e8bdaf03faa4e9775461eb0c0"
+      },
+      "expected_filename": "checkpoint.pt",
+      "selector": {"training_seed": 0, "method": "path_opd"}
+    },
+    {
+      "id": "checkpoint_endpoint_dagger_seed_1",
+      "kind": "paper_checkpoint",
+      "description": "Endpoint-DAgger final checkpoint for training seed 1.",
+      "required": true,
+      "used_by": ["reproduce_paper_results"],
+      "location": {
+        "type": "user_parameter",
+        "parameter": "maniskill_checkpoint_endpoint_dagger_seed_1",
+        "relative_path": null,
+        "public_url_status": "unknown",
+        "public_url": null
+      },
+      "license": {"status": "unknown", "identifier": null},
+      "integrity": {
+        "status": "known",
+        "sha256": "62b818b305461432b81ad733333798c51f898b55ba1169adac10b635db9d1aad"
+      },
+      "expected_filename": "checkpoint.pt",
+      "selector": {"training_seed": 1, "method": "endpoint_dagger"}
+    },
+    {
+      "id": "checkpoint_path_opd_seed_1",
+      "kind": "paper_checkpoint",
+      "description": "Path-OPD final checkpoint for training seed 1.",
+      "required": true,
+      "used_by": ["reproduce_paper_results"],
+      "location": {
+        "type": "user_parameter",
+        "parameter": "maniskill_checkpoint_path_opd_seed_1",
+        "relative_path": null,
+        "public_url_status": "unknown",
+        "public_url": null
+      },
+      "license": {"status": "unknown", "identifier": null},
+      "integrity": {
+        "status": "known",
+        "sha256": "94803b092ddb7d4b0221e51b27d875c817e277eb47932c298b1087017af53a18"
+      },
+      "expected_filename": "checkpoint.pt",
+      "selector": {"training_seed": 1, "method": "path_opd"}
+    },
+    {
+      "id": "checkpoint_endpoint_dagger_seed_2",
+      "kind": "paper_checkpoint",
+      "description": "Endpoint-DAgger final checkpoint for training seed 2.",
+      "required": true,
+      "used_by": ["reproduce_paper_results"],
+      "location": {
+        "type": "user_parameter",
+        "parameter": "maniskill_checkpoint_endpoint_dagger_seed_2",
+        "relative_path": null,
+        "public_url_status": "unknown",
+        "public_url": null
+      },
+      "license": {"status": "unknown", "identifier": null},
+      "integrity": {
+        "status": "known",
+        "sha256": "9e53cd4ee08c96bd694de4c376d19ab3dab944675b4513cb22995335107389c6"
+      },
+      "expected_filename": "checkpoint.pt",
+      "selector": {"training_seed": 2, "method": "endpoint_dagger"}
+    },
+    {
+      "id": "checkpoint_path_opd_seed_2",
+      "kind": "paper_checkpoint",
+      "description": "Path-OPD final checkpoint for training seed 2.",
+      "required": true,
+      "used_by": ["reproduce_paper_results"],
+      "location": {
+        "type": "user_parameter",
+        "parameter": "maniskill_checkpoint_path_opd_seed_2",
+        "relative_path": null,
+        "public_url_status": "unknown",
+        "public_url": null
+      },
+      "license": {"status": "unknown", "identifier": null},
+      "integrity": {
+        "status": "known",
+        "sha256": "6b4f0dc54de1d86efc44171f8d6edc541ba6a00e82bea3ada21cee414630d40c"
+      },
+      "expected_filename": "checkpoint.pt",
+      "selector": {"training_seed": 2, "method": "path_opd"}
+    }
+  ]
+}

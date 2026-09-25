@@ -1,0 +1,48 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "path-opd"
+version = "0.1.0"
+description = "Anonymous reference implementation of PVD (Path-wise Velocity Distillation)"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = ["torch==2.11.0"]
+
+[project.optional-dependencies]
+test = ["numpy>=1.26,<3", "pytest==9.1.1", "ruff==0.16.8"]
+
+[tool.uv]
+default-groups = []
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[tool.uv.sources]
+torch = { index = "pytorch-cpu" }
+
+[project.scripts]
+path-opd = "path_opd.cli:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+path_opd = ["data/configs/*.json", "data/configs/assets/*.json"]
+
+[tool.pytest.ini_options]
+addopts = "-ra"
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "RUF"]

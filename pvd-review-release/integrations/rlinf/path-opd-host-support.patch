@@ -1,0 +1,309 @@
+diff --git a/rlinf/models/embodiment/action_contract.py b/rlinf/models/embodiment/action_contract.py
+new file mode 100644
+index 0000000..de0d390
+--- /dev/null
++++ b/rlinf/models/embodiment/action_contract.py
+@@ -0,0 +1,50 @@
++# Copyright 2026 The RLinf Authors.
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++#     https://www.apache.org/licenses/LICENSE-2.0
++
++from dataclasses import dataclass
++
++import torch
++
++
++@dataclass(frozen=True)
++class ValidActionContract:
++    """Physical action domain shared by endpoint and path supervision."""
++
++    chunk_length: int
++    action_dims: int
++
++    def __post_init__(self) -> None:
++        if self.chunk_length <= 0 or self.action_dims <= 0:
++            raise ValueError("Action contract dimensions must be positive.")
++
++    def crop(self, tensor: torch.Tensor) -> torch.Tensor:
++        """Return only executable chunk positions and physical action dimensions."""
++        if tensor.ndim < 2:
++            raise ValueError(f"Expected action tensor rank >= 2, got {tensor.ndim}.")
++        if tensor.shape[-2] < self.chunk_length:
++            raise ValueError(
++                f"Action horizon {tensor.shape[-2]} is shorter than valid chunk "
++                f"length {self.chunk_length}."
++            )
++        if tensor.shape[-1] < self.action_dims:
++            raise ValueError(
++                f"Action width {tensor.shape[-1]} is shorter than physical width "
++                f"{self.action_dims}."
++            )
++        return tensor[..., : self.chunk_length, : self.action_dims]
++
++    def mask_like(self, tensor: torch.Tensor) -> torch.Tensor:
++        """Build a boolean mask over the full model action tensor."""
++        self.crop(tensor)
++        mask = torch.zeros_like(tensor, dtype=torch.bool)
++        mask[..., : self.chunk_length, : self.action_dims] = True
++        return mask
++
++    def valid_count(self, tensor: torch.Tensor) -> int:
++        """Return the number of scalar physical-action entries."""
++        return int(self.mask_like(tensor).sum().item())
+diff --git a/rlinf/models/embodiment/openpi/openpi_action_model.py b/rlinf/models/embodiment/openpi/openpi_action_model.py
+index 9329f89..9f45e3d 100644
+--- a/rlinf/models/embodiment/openpi/openpi_action_model.py
++++ b/rlinf/models/embodiment/openpi/openpi_action_model.py
+@@ -28,6 +28,7 @@ from openpi.models.pi0_config import Pi0Config
+ from openpi.models_pytorch.pi0_pytorch import PI0Pytorch, make_att_2d_masks
+ from torch.utils._pytree import tree_map
+ 
++from rlinf.models.embodiment.action_contract import ValidActionContract
+ from rlinf.models.embodiment.base_policy import BasePolicy, ForwardType
+ from rlinf.models.embodiment.modules.explore_noise_net import ExploreNoiseNet
+ from rlinf.models.embodiment.modules.value_head import ValueHead
+@@ -362,6 +363,18 @@ class OpenPi0ForRLActionPrediction(PI0Pytorch, BasePolicy):
+         outputs["actions"] = outputs["actions"][:, : self.config.action_chunk]
+         return outputs
+ 
++    @property
++    def valid_action_contract(self) -> ValidActionContract:
++        """Return the physical action domain used by all supervised losses."""
++        return ValidActionContract(
++            chunk_length=self.config.action_chunk,
++            action_dims=self.config.action_env_dim,
++        )
++
++    def crop_valid_actions(self, tensor: torch.Tensor) -> torch.Tensor:
++        """Crop a model-space tensor to executable physical actions."""
++        return self.valid_action_contract.crop(tensor)
++
+     def forward(self, forward_type=ForwardType.DEFAULT, **kwargs):
+         if forward_type == ForwardType.SFT:
+             return self.sft_forward(**kwargs)
+@@ -410,7 +423,7 @@ class OpenPi0ForRLActionPrediction(PI0Pytorch, BasePolicy):
+         else:
+             loss = super().forward(observation, actions)
+         if use_action_chunk_loss:
+-            loss = loss[:, : self.config.action_chunk, : self.config.action_env_dim]
++            loss = self.crop_valid_actions(loss)
+         vla_loss = loss.mean()
+         if not self.config.use_rlt:
+             return vla_loss
+@@ -747,12 +760,8 @@ class OpenPi0ForRLActionPrediction(PI0Pytorch, BasePolicy):
+             denoise_inds,
+             compute_values,
+         )
+-        log_probs = log_probs[
+-            :, :, : self.config.action_chunk, : self.config.action_env_dim
+-        ]
+-        entropy = entropy[
+-            :, :, : self.config.action_chunk, : self.config.action_env_dim
+-        ]
++        log_probs = self.crop_valid_actions(log_probs)
++        entropy = self.crop_valid_actions(entropy)
+         # post process
+         log_probs = log_probs.mean(dim=1)
+         entropy = entropy.mean(dim=[1, 2, 3], keepdim=False)[
+@@ -814,10 +823,12 @@ class OpenPi0ForRLActionPrediction(PI0Pytorch, BasePolicy):
+             processed_obs["observation/state_gripper"] = state[:, 6:7]
+         else:
+             processed_obs["observation/state"] = env_states
+-        if env_obs["wrist_images"] is not None:
+-            processed_obs["observation/wrist_image"] = env_obs["wrist_images"]
+-        if env_obs["extra_view_images"] is not None:
+-            processed_obs["observation/extra_view_image"] = env_obs["extra_view_images"]
++        wrist_images = env_obs.get("wrist_images")
++        if wrist_images is not None:
++            processed_obs["observation/wrist_image"] = wrist_images
++        extra_view_images = env_obs.get("extra_view_images")
++        if extra_view_images is not None:
++            processed_obs["observation/extra_view_image"] = extra_view_images
+         return processed_obs
+ 
+     def precision_processor(self, processed_obs):
+@@ -888,6 +899,7 @@ class OpenPi0ForRLActionPrediction(PI0Pytorch, BasePolicy):
+ 
+         else:
+             # Non-DSRL or eval mode
++            initial_noise = kwargs.get("initial_noise")
+             if rtc_context is not None and mode == "eval" and self.config.rtc_enabled:
+                 # RTC is only used during evaluation: the rollout worker passes
+                 # the previous model-space action chunk so the sampler can guide
+@@ -895,12 +907,16 @@ class OpenPi0ForRLActionPrediction(PI0Pytorch, BasePolicy):
+                 outputs = self.sample_actions_with_rtc_guidance(
+                     observation,
+                     rtc_context=rtc_context,
++                    noise=initial_noise,
+                     mode=mode,
+                     compute_values=compute_values,
+                 )
+             else:
+                 outputs = self.sample_actions(
+-                    observation, mode=mode, compute_values=compute_values
++                    observation,
++                    noise=initial_noise,
++                    mode=mode,
++                    compute_values=compute_values,
+                 )
+             actions = self.output_transform(
+                 {"actions": outputs["actions"], "state": observation.state}
+diff --git a/rlinf/envs/calvin/calvin_gym_env.py b/rlinf/envs/calvin/calvin_gym_env.py
+index d82cb06..51ab9ad 100644
+--- a/rlinf/envs/calvin/calvin_gym_env.py
++++ b/rlinf/envs/calvin/calvin_gym_env.py
+@@ -333,6 +333,11 @@ class CalvinEnv(gym.Env):
+             num_reset_states = len(env_idx)
+             reset_state_ids = self._get_random_reset_state_ids(num_reset_states)
+ 
++        reset_state_ids = np.asarray(reset_state_ids).copy()
++        if not hasattr(self, "last_reset_state_ids"):
++            self.last_reset_state_ids = np.empty(self.num_envs, dtype=reset_state_ids.dtype)
++        self.last_reset_state_ids[np.asarray(env_idx)] = reset_state_ids
++
+         self._reconfigure(reset_state_ids, env_idx)
+         raw_obs = self.env.get_obs()
+         obs = self._wrap_obs(raw_obs)
+@@ -343,6 +348,80 @@ class CalvinEnv(gym.Env):
+         infos = {}
+         return obs, infos
+ 
++    def capture_checkpoint_state(self):
++        """Capture exact continuation state at a post-update safe boundary."""
++        return {
++            "subprocess_environment": self.env.serialize(),
++            "generator_state": copy.deepcopy(self._generator.bit_generator.state),
++            "ordered_generator_state": copy.deepcopy(
++                self._generator_ordered.bit_generator.state
++            ),
++            "is_start": self._is_start,
++            "start_idx": self.start_idx,
++            "reset_state_ids_all": self.reset_state_ids_all.copy(),
++            "reset_state_ids": self.reset_state_ids.copy(),
++            "last_reset_state_ids": self.last_reset_state_ids.copy(),
++            "task_ids": self.task_ids.copy(),
++            "trial_ids": self.trial_ids.copy(),
++            "task_sequence": copy.deepcopy(self.task_sequence),
++            "current_task": copy.deepcopy(self.current_task),
++            "current_task_idx": copy.deepcopy(self.current_task_idx),
++            "previous_info": copy.deepcopy(self.previous_info),
++            "task_descriptions": copy.deepcopy(self.task_descriptions),
++            "prev_step_reward": self.prev_step_reward.copy(),
++            "success_once": self.success_once.copy(),
++            "fail_once": self.fail_once.copy(),
++            "returns": self.returns.copy(),
++            "elapsed_steps": self._elapsed_steps.copy(),
++        }
++
++    def restore_checkpoint_state(self, state):
++        """Restore exact continuation state without selecting a new task/reset."""
++        self.restore_checkpoint_metadata(state)
++        restored = self.env.restore_from_storage(state["subprocess_environment"])
++        raw_obs = [item["state_obs"] for item in restored]
++        return self._wrap_obs(raw_obs)
++
++    def restore_checkpoint_metadata(self, state):
++        """Restore sampler, task cursor, and accounting without touching physics."""
++        self._generator.bit_generator.state = copy.deepcopy(state["generator_state"])
++        self._generator_ordered.bit_generator.state = copy.deepcopy(
++            state["ordered_generator_state"]
++        )
++        self._is_start = state["is_start"]
++        self.start_idx = state["start_idx"]
++        for name in (
++            "reset_state_ids_all",
++            "reset_state_ids",
++            "last_reset_state_ids",
++            "task_ids",
++            "trial_ids",
++            "prev_step_reward",
++            "success_once",
++            "fail_once",
++            "returns",
++        ):
++            setattr(self, name, state[name].copy())
++        self._elapsed_steps = state["elapsed_steps"].copy()
++        for name in (
++            "task_sequence",
++            "current_task",
++            "current_task_idx",
++            "previous_info",
++            "task_descriptions",
++        ):
++            setattr(self, name, copy.deepcopy(state[name]))
++
++    def replay_checkpoint_state(self, state, action_history):
++        """Reconstruct portable physics state from the last reset and actions."""
++        obs, _ = self.reset(reset_state_ids=state["last_reset_state_ids"])
++        for actions in action_history:
++            chunk_obs, _, _, _, _ = self.chunk_step(actions)
++            obs = chunk_obs[-1]
++        self.restore_checkpoint_metadata(state)
++        obs["task_descriptions"] = copy.deepcopy(self.task_descriptions)
++        return obs
++
+     def step(self, actions=None, auto_reset=True):
+         if isinstance(actions, torch.Tensor):
+             actions = actions.detach().cpu().numpy()
+diff --git a/rlinf/envs/calvin/venv.py b/rlinf/envs/calvin/venv.py
+index 6961349..e84dd0b 100644
+--- a/rlinf/envs/calvin/venv.py
++++ b/rlinf/envs/calvin/venv.py
+@@ -100,6 +100,33 @@ def _worker(
+                 p.send(env.get_obs() if hasattr(env, "get_obs") else None)
+             elif cmd == "get_info":
+                 p.send(env.get_info() if hasattr(env, "get_info") else None)
++            elif cmd == "serialize":
++                if not hasattr(env, "serialize"):
++                    raise AttributeError("CALVIN environment does not support serialize")
++                state = env.serialize()
++                state.pop("time", None)
++                state["state_obs"] = env.get_obs()
++                state["done"] = False
++                state["info"] = env.get_info()
++                if getattr(env, "np_random", None) is not None:
++                    state["np_random_state"] = env.np_random.bit_generator.state
++                # Relative CALVIN actions accumulate from these controller targets;
++                # restoring only physical joints changes the next action after reload.
++                state["robot_target_pos"] = np.asarray(env.robot.target_pos).copy()
++                state["robot_target_orn"] = np.asarray(env.robot.target_orn).copy()
++                p.send(state)
++            elif cmd == "restore_from_storage":
++                if not hasattr(env, "robot") or not hasattr(env, "scene"):
++                    raise AttributeError("CALVIN environment does not expose restorable robot/scene state")
++                env.robot.reset_from_storage(data["robot"])
++                env.scene.reset_from_storage(data["scene"])
++                if "np_random_state" in data:
++                    env.np_random.bit_generator.state = data["np_random_state"]
++                if "robot_target_pos" in data:
++                    env.robot.target_pos = np.asarray(data["robot_target_pos"]).copy()
++                if "robot_target_orn" in data:
++                    env.robot.target_orn = np.asarray(data["robot_target_orn"]).copy()
++                p.send({"state_obs": env.get_obs(), "done": data.get("done", False), "info": env.get_info()})
+             elif cmd == "seed":
+                 if hasattr(env, "seed"):
+                     p.send(env.seed(data))
+@@ -262,3 +289,19 @@ class ReconfigureSubprocEnv(SubprocVectorEnv):
+         info_list = [self.workers[i].get_info() for i in id]
+ 
+         return info_list
++
++    def serialize(self, id: Optional[Union[int, list[int], np.ndarray]] = None) -> list[Any]:
++        self._assert_is_not_closed()
++        id = self._wrap_id(id)
++        values = []
++        for i in id:
++            self.workers[i].parent_remote.send(["serialize", {}])
++            values.append(self.workers[i].parent_remote.recv())
++        return values
++
++    def restore_from_storage(self, data: list[Any], id: Optional[Union[int, list[int], np.ndarray]] = None) -> list[Any]:
++        self._assert_is_not_closed()
++        id = self._wrap_id(id)
++        for index, i in enumerate(id):
++            self.workers[i].parent_remote.send(["restore_from_storage", data[index]])
++        return [self.workers[i].parent_remote.recv() for i in id]

@@ -1,0 +1,259 @@
+{
+  "schema_version": 1,
+  "benchmark": "calvin_abc_d",
+  "assets": [
+    {
+      "id": "base_model",
+      "kind": "model",
+      "description": "PI0.5 CALVIN ABC-D student initialization used by the paper runs.",
+      "required": true,
+      "used_by": ["train", "evaluate"],
+      "location": {
+        "type": "user_parameter",
+        "parameter": "calvin_base_model",
+        "relative_path": null,
+        "public_url_status": "known",
+        "public_url": "https://huggingface.co/RLinf/RLinf-Pi05-CALVIN-ABC-D-SFT",
+        "revision_status": "known",
+        "revision": "ffe18938a37d3855c9ff50d6220d39bcd6434f15"
+      },
+      "license": {"status": "known", "identifier": "Apache-2.0"},
+      "integrity": {
+        "status": "known",
+        "sha256": "1ac4fcd76dfe131f9ce4cec94a750424f9eac0275285ebda7ad05ee9550c3bf8"
+      },
+      "expected_filename": "model.safetensors",
+      "selector": null
+    },
+    {
+      "id": "frozen_teacher",
+      "kind": "model",
+      "description": "Frozen actor-only FlowSDE teacher used by both training methods.",
+      "required": true,
+      "used_by": ["train"],
+      "location": {
+        "type": "user_parameter",
+        "parameter": "calvin_frozen_teacher",
+        "relative_path": null,
+        "public_url_status": "known",
+        "public_url": "https://huggingface.co/RLinf/RLinf-Pi05-CALVIN-ABC-D-RL-FlowSDE",
+        "revision_status": "known",
+        "revision": "712bd3da6f8a92be8004ccf53078af70cc945bc7"
+      },
+      "license": {"status": "unknown", "identifier": null},
+      "integrity": {
+        "status": "known",
+        "sha256": "0c323860371b91a4835096d3987487367b2b094bf81a22b22812524e462a32aa"
+      },
+      "expected_filename": "model.safetensors",
+      "selector": null
+    },
+    {
+      "id": "normalization_stats",
+      "kind": "normalization_stats",
+      "description": "Normalization statistics paired with the recorded CALVIN models.",
+      "required": true,
+      "used_by": ["train", "evaluate"],
+      "location": {
+        "type": "user_parameter",
+        "parameter": "calvin_normalization_stats",
+        "relative_path": null,
+        "public_url_status": "known",
+        "public_url": "https://huggingface.co/RLinf/RLinf-Pi05-CALVIN-ABC-D-SFT",
+        "artifact_path": "InternRobotics/InternData-Calvin_ABC/norm_stats.json",
+        "revision_status": "known",
+        "revision": "ffe18938a37d3855c9ff50d6220d39bcd6434f15"
+      },
+      "license": {"status": "known", "identifier": "Apache-2.0"},
+      "integrity": {
+        "status": "known",
+        "sha256": "72903e3dad8fc7f4f799e36ee723d0c7f53cb815cc6c55f8ad75f62358f00b41"
+      },
+      "expected_filename": "norm_stats.json",
+      "selector": null
+    },
+    {
+      "id": "environment_assets",
+      "kind": "environment_assets",
+      "description": "CALVIN scene-D simulator assets required for online training and evaluation.",
+      "required": true,
+      "used_by": ["train", "evaluate", "reproduce_paper_results"],
+      "location": {
+        "type": "user_parameter",
+        "parameter": "calvin_environment_assets",
+        "relative_path": null,
+        "public_url_status": "unknown",
+        "public_url": null
+      },
+      "license": {"status": "unknown", "identifier": null},
+      "integrity": {"status": "unknown", "sha256": null},
+      "expected_filename": null,
+      "selector": null
+    },
+    {
+      "id": "task_oracle_annotations",
+      "kind": "benchmark_metadata",
+      "description": "Task oracle and language annotations required by Official-D evaluation.",
+      "required": true,
+      "used_by": ["train", "evaluate", "reproduce_paper_results"],
+      "location": {
+        "type": "user_parameter",
+        "parameter": "calvin_task_oracle_annotations",
+        "relative_path": null,
+        "public_url_status": "unknown",
+        "public_url": null
+      },
+      "license": {"status": "unknown", "identifier": null},
+      "integrity": {"status": "unknown", "sha256": null},
+      "expected_filename": null,
+      "selector": null
+    },
+    {
+      "id": "official_d_panel",
+      "kind": "evaluation_panel",
+      "description": "Fixed 1,000-sequence Official-D evaluation panel.",
+      "required": true,
+      "used_by": ["evaluate", "reproduce_paper_results"],
+      "location": {
+        "type": "user_parameter",
+        "parameter": "calvin_official_d_panel",
+        "relative_path": null,
+        "public_url_status": "unknown",
+        "public_url": null
+      },
+      "license": {"status": "unknown", "identifier": null},
+      "integrity": {
+        "status": "known",
+        "sha256": "0aaa7c37dd5976b3f4372b8501e67e692ff565ba48730c0481aa3f92ff71ff60"
+      },
+      "expected_filename": "CALVIN_OFFICIAL_D_SEQUENCES_1000.json",
+      "selector": null
+    },
+    {
+      "id": "checkpoint_endpoint_dagger_seed_0",
+      "kind": "paper_checkpoint",
+      "description": "Endpoint-DAgger final checkpoint for training seed 0.",
+      "required": true,
+      "used_by": ["reproduce_paper_results"],
+      "location": {
+        "type": "user_parameter",
+        "parameter": "calvin_checkpoint_endpoint_dagger_seed_0",
+        "relative_path": null,
+        "public_url_status": "unknown",
+        "public_url": null
+      },
+      "license": {"status": "unknown", "identifier": null},
+      "integrity": {
+        "status": "known",
+        "sha256": "084939c8b1d95bea590d7397bfc708785af1e49aa229df6190d4acade6fc6b4d"
+      },
+      "expected_filename": "checkpoint.pt",
+      "selector": {"training_seed": 0, "method": "endpoint_dagger"}
+    },
+    {
+      "id": "checkpoint_path_opd_seed_0",
+      "kind": "paper_checkpoint",
+      "description": "Path-OPD final checkpoint for training seed 0.",
+      "required": true,
+      "used_by": ["reproduce_paper_results"],
+      "location": {
+        "type": "user_parameter",
+        "parameter": "calvin_checkpoint_path_opd_seed_0",
+        "relative_path": null,
+        "public_url_status": "unknown",
+        "public_url": null
+      },
+      "license": {"status": "unknown", "identifier": null},
+      "integrity": {
+        "status": "known",
+        "sha256": "cb936ad112c6015f020abdccf975db112491b2cd9a4003b6b3bf2e2f0e01c5f3"
+      },
+      "expected_filename": "checkpoint.pt",
+      "selector": {"training_seed": 0, "method": "path_opd"}
+    },
+    {
+      "id": "checkpoint_endpoint_dagger_seed_1",
+      "kind": "paper_checkpoint",
+      "description": "Endpoint-DAgger final checkpoint for training seed 1.",
+      "required": true,
+      "used_by": ["reproduce_paper_results"],
+      "location": {
+        "type": "user_parameter",
+        "parameter": "calvin_checkpoint_endpoint_dagger_seed_1",
+        "relative_path": null,
+        "public_url_status": "unknown",
+        "public_url": null
+      },
+      "license": {"status": "unknown", "identifier": null},
+      "integrity": {
+        "status": "known",
+        "sha256": "9d4f471a38fbac6dd6f0427a097bb79412eaf6828860c984f6283c9c91bfcc60"
+      },
+      "expected_filename": "checkpoint.pt",
+      "selector": {"training_seed": 1, "method": "endpoint_dagger"}
+    },
+    {
+      "id": "checkpoint_path_opd_seed_1",
+      "kind": "paper_checkpoint",
+      "description": "Path-OPD final checkpoint for training seed 1.",
+      "required": true,
+      "used_by": ["reproduce_paper_results"],
+      "location": {
+        "type": "user_parameter",
+        "parameter": "calvin_checkpoint_path_opd_seed_1",
+        "relative_path": null,
+        "public_url_status": "unknown",
+        "public_url": null
+      },
+      "license": {"status": "unknown", "identifier": null},
+      "integrity": {
+        "status": "known",
+        "sha256": "9909a7007334557d2324425734d20e757ebf828f02fca4f6e876b1343049a7bd"
+      },
+      "expected_filename": "checkpoint.pt",
+      "selector": {"training_seed": 1, "method": "path_opd"}
+    },
+    {
+      "id": "checkpoint_endpoint_dagger_seed_2",
+      "kind": "paper_checkpoint",
+      "description": "Endpoint-DAgger final checkpoint for training seed 2.",
+      "required": true,
+      "used_by": ["reproduce_paper_results"],
+      "location": {
+        "type": "user_parameter",
+        "parameter": "calvin_checkpoint_endpoint_dagger_seed_2",
+        "relative_path": null,
+        "public_url_status": "unknown",
+        "public_url": null
+      },
+      "license": {"status": "unknown", "identifier": null},
+      "integrity": {
+        "status": "known",
+        "sha256": "0539b3a35fa0cf03eaab0bf9672d6882c36267a1c8aa9259e1441053f8dc4fb8"
+      },
+      "expected_filename": "checkpoint.pt",
+      "selector": {"training_seed": 2, "method": "endpoint_dagger"}
+    },
+    {
+      "id": "checkpoint_path_opd_seed_2",
+      "kind": "paper_checkpoint",
+      "description": "Path-OPD final checkpoint for training seed 2.",
+      "required": true,
+      "used_by": ["reproduce_paper_results"],
+      "location": {
+        "type": "user_parameter",
+        "parameter": "calvin_checkpoint_path_opd_seed_2",
+        "relative_path": null,
+        "public_url_status": "unknown",
+        "public_url": null
+      },
+      "license": {"status": "unknown", "identifier": null},
+      "integrity": {
+        "status": "known",
+        "sha256": "b8ae3e4eb1c67793f4ae9cf6ddda8b305223b337a054d2b1486511be7687e22b"
+      },
+      "expected_filename": "checkpoint.pt",
+      "selector": {"training_seed": 2, "method": "path_opd"}
+    }
+  ]
+}

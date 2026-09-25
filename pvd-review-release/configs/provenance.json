@@ -1,0 +1,77 @@
+{
+  "schema": "path-opd-release-contract-v1",
+  "sources": [
+    {
+      "name": "RLinf",
+      "url": "https://github.com/RLinf/RLinf",
+      "revision": "fbc72dd6eef6c6ecf69b26a67d13325fcf4de74c",
+      "license": "Apache-2.0",
+      "sha256": "30296071647c0fcdd36d7b12c08fd5d627b5c2f03e8ac73360def51784b30d6f",
+      "redistribution": "patch-only",
+      "sha256_scope": "integration_patch"
+    },
+    {
+      "name": "RLinf-openpi",
+      "url": "https://pypi.org/project/rlinf-openpi/0.1.1/",
+      "revision": "0.1.1",
+      "license": "Apache-2.0",
+      "sha256": "e7b8e6e61d575487bce63e89dee5e7af7834904ee07152bcbbd5b58c06e4c47d",
+      "redistribution": "external-download",
+      "sha256_scope": "pypi_wheel"
+    },
+    {
+      "name": "PyTorch",
+      "url": "https://pytorch.org/",
+      "revision": "2.11.0",
+      "license": "BSD-3-Clause",
+      "sha256": null,
+      "redistribution": "external-wheel",
+      "sha256_scope": "none"
+    },
+    {
+      "name": "ManiSkill",
+      "url": "https://github.com/mani-skill/ManiSkill",
+      "revision": "33967b9e3ead1f841eec57cc9f31d0d8b8cf0907",
+      "license": "Apache-2.0",
+      "sha256": null,
+      "redistribution": "external-download",
+      "sha256_scope": "none"
+    },
+    {
+      "name": "MetaWorld",
+      "url": "https://github.com/Farama-Foundation/Metaworld",
+      "revision": "73c6feed5eda4c5269088e914692e8f295c374e2",
+      "license": "MIT",
+      "sha256": null,
+      "redistribution": "external-download",
+      "sha256_scope": "none"
+    },
+    {
+      "name": "MuJoCo",
+      "url": "https://github.com/google-deepmind/mujoco",
+      "revision": null,
+      "license": "Apache-2.0",
+      "sha256": null,
+      "redistribution": "external-download",
+      "sha256_scope": "none"
+    },
+    {
+      "name": "CALVIN",
+      "url": "https://github.com/mees/calvin",
+      "revision": null,
+      "license": "MIT",
+      "sha256": null,
+      "redistribution": "external-download",
+      "sha256_scope": "none"
+    },
+    {
+      "name": "paper-model-and-panel-artifacts",
+      "url": null,
+      "revision": null,
+      "license": null,
+      "sha256": null,
+      "redistribution": "not-published-in-review-snapshot",
+      "sha256_scope": "none"
+    }
+  ]
+}

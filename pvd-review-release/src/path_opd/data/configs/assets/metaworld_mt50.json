@@ -1,0 +1,162 @@
+{
+  "schema_version": 1,
+  "benchmark": "metaworld_mt50",
+  "assets": [
+    {
+      "id": "base_model",
+      "kind": "model",
+      "description": "PI0.5 MetaWorld student initialization used by the paper runs.",
+      "required": true,
+      "used_by": ["train"],
+      "location": {
+        "type": "user_parameter",
+        "parameter": "metaworld_base_model",
+        "relative_path": null,
+        "public_url_status": "known",
+        "public_url": "https://huggingface.co/RLinf/RLinf-Pi05-MetaWorld-SFT",
+        "revision_status": "known",
+        "revision": "60b2d0309af8bb087c9e9b250f8c7f9db50c0f8e",
+        "artifact_path": "model.safetensors"
+      },
+      "license": {"status": "unknown", "identifier": null},
+      "integrity": {
+        "status": "known",
+        "sha256": "6e877ae8e2c9c33a2b8d1e3a8a60649ef39b0268da60a3ee71bc5e33cbca7221"
+      },
+      "expected_filename": "model.safetensors",
+      "selector": null
+    },
+    {
+      "id": "frozen_teacher",
+      "kind": "model",
+      "description": "Frozen actor-only FlowSDE teacher used by both training methods.",
+      "required": true,
+      "used_by": ["train"],
+      "location": {
+        "type": "user_parameter",
+        "parameter": "metaworld_frozen_teacher",
+        "relative_path": null,
+        "public_url_status": "known",
+        "public_url": "https://huggingface.co/RLinf/RLinf-Pi05-MetaWorld-RL-FlowSDE",
+        "revision_status": "known",
+        "revision": "22a30b31e1144a47bf2dc60bcb70c03c5abdf036",
+        "artifact_path": "model.safetensors"
+      },
+      "license": {"status": "unknown", "identifier": null},
+      "integrity": {
+        "status": "known",
+        "sha256": "e14684cd8e6938ec026eba1d3a11dde757a2b5b503194db85c5b51517fcb11c9"
+      },
+      "expected_filename": "model.safetensors",
+      "selector": null
+    },
+    {
+      "id": "normalization_stats",
+      "kind": "normalization_stats",
+      "description": "Normalization statistics paired with the recorded MetaWorld models.",
+      "required": true,
+      "used_by": ["train", "evaluate"],
+      "location": {
+        "type": "user_parameter",
+        "parameter": "metaworld_normalization_stats",
+        "relative_path": null,
+        "public_url_status": "known",
+        "public_url": "https://huggingface.co/RLinf/RLinf-Pi05-MetaWorld-SFT",
+        "artifact_path": "lerobot/metaworld_mt50/norm_stats.json",
+        "revision_status": "known",
+        "revision": "60b2d0309af8bb087c9e9b250f8c7f9db50c0f8e"
+      },
+      "license": {"status": "unknown", "identifier": null},
+      "integrity": {
+        "status": "known",
+        "sha256": "ab3e2f7380ccbd0967fe391e07d4bc67492ceb7e3e06a9c03397aa6c28309220"
+      },
+      "expected_filename": "norm_stats.json",
+      "selector": null
+    },
+    {
+      "id": "checkpoint_endpoint_dagger_seed_0",
+      "kind": "paper_checkpoint",
+      "description": "Endpoint-DAgger final checkpoint for training seed 0.",
+      "required": true,
+      "used_by": ["reproduce_paper_results"],
+      "location": {
+        "type": "user_parameter",
+        "parameter": "metaworld_checkpoint_endpoint_dagger_seed_0",
+        "relative_path": null,
+        "public_url_status": "unknown",
+        "public_url": null
+      },
+      "license": {"status": "unknown", "identifier": null},
+      "integrity": {
+        "status": "known",
+        "sha256": "2af9fbf4052d70a0b4754662cf55df4d600aafbdd3630be0f76f3dcb6dcddc51"
+      },
+      "expected_filename": "model.safetensors",
+      "selector": {"training_seed": 0, "method": "endpoint_dagger"}
+    },
+    {
+      "id": "checkpoint_path_opd_seed_0",
+      "kind": "paper_checkpoint",
+      "description": "Path-OPD final checkpoint for training seed 0.",
+      "required": true,
+      "used_by": ["reproduce_paper_results"],
+      "location": {
+        "type": "user_parameter",
+        "parameter": "metaworld_checkpoint_path_opd_seed_0",
+        "relative_path": null,
+        "public_url_status": "unknown",
+        "public_url": null
+      },
+      "license": {"status": "unknown", "identifier": null},
+      "integrity": {
+        "status": "known",
+        "sha256": "9625f3ee138c56dc94057a35448345de16b6dabb62934f5282f6c7f69a7aaf3e"
+      },
+      "expected_filename": "model.safetensors",
+      "selector": {"training_seed": 0, "method": "path_opd"}
+    },
+    {
+      "id": "checkpoint_endpoint_dagger_seed_1",
+      "kind": "paper_checkpoint",
+      "description": "Endpoint-DAgger final checkpoint for training seed 1.",
+      "required": true,
+      "used_by": ["reproduce_paper_results"],
+      "location": {
+        "type": "user_parameter",
+        "parameter": "metaworld_checkpoint_endpoint_dagger_seed_1",
+        "relative_path": null,
+        "public_url_status": "unknown",
+        "public_url": null
+      },
+      "license": {"status": "unknown", "identifier": null},
+      "integrity": {
+        "status": "known",
+        "sha256": "6a480ceefaff0ac4545bdd3eb47881b18dee105f4ed80953f7df28a3a5e56243"
+      },
+      "expected_filename": "model.safetensors",
+      "selector": {"training_seed": 1, "method": "endpoint_dagger"}
+    },
+    {
+      "id": "checkpoint_path_opd_seed_1",
+      "kind": "paper_checkpoint",
+      "description": "Path-OPD final checkpoint for training seed 1.",
+      "required": true,
+      "used_by": ["reproduce_paper_results"],
+      "location": {
+        "type": "user_parameter",
+        "parameter": "metaworld_checkpoint_path_opd_seed_1",
+        "relative_path": null,
+        "public_url_status": "unknown",
+        "public_url": null
+      },
+      "license": {"status": "unknown", "identifier": null},
+      "integrity": {
+        "status": "known",
+        "sha256": "e5e93898123b965efae2cf1fe0b6223c923a7008f715aaac9073d8983aac68a3"
+      },
+      "expected_filename": "model.safetensors",
+      "selector": {"training_seed": 1, "method": "path_opd"}
+    }
+  ]
+}

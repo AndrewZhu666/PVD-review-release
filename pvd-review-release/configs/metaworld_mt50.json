@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "benchmark": "metaworld_mt50",
+  "display_name": "MetaWorld MT50",
+  "task": "MT50",
+  "assets_manifest": "assets/metaworld_mt50.json",
+  "training": {
+    "methods": ["endpoint_dagger", "path_opd"],
+    "seeds": [0, 1],
+    "world_size": 8,
+    "per_rank_batch_size": 1,
+    "global_batch_size": 8,
+    "fresh_chunks": 80000,
+    "optimizer_updates": 10000,
+    "environment_action_steps": 400000,
+    "replay": false,
+    "presentations_per_chunk": 1,
+    "checkpoint_chunks": [10000, 20000, 40000, 60000, 80000],
+    "rank_seed_strategy": "training_seed_plus_rank_multiple",
+    "rank_seed_multiplier": 100003,
+    "optimizer": {
+      "name": "adamw",
+      "learning_rate": 0.00000791,
+      "betas": [0.9, 0.95],
+      "epsilon": 0.00001,
+      "weight_decay": 0.01,
+      "global_gradient_clip_norm": 1.0
+    }
+  },
+  "flow": {
+    "solver": "euler",
+    "student_steps": 5,
+    "teacher_steps": 5
+  },
+  "action": {
+    "model_horizon": 5,
+    "model_dimensions": 32,
+    "execution_prefix": 5,
+    "physical_dimensions": 4
+  },
+  "supervision": {
+    "student_path_states": "pre_transition",
+    "exclude_endpoint": true,
+    "detach_student_path": true,
+    "teacher_query": "same_student_states_and_times",
+    "time_weighting": "uniform",
+    "teacher_frozen": true,
+    "teacher_eval": true,
+    "teacher_gradients": false,
+    "teacher_actor_only": true,
+    "trainable_scope": "action_expert_only",
+    "dagger_target": "teacher_rollout_endpoint",
+    "dagger_loss": "native_conditional_flow_matching"
+  },
+  "evaluation": {
+    "protocol": "matched_mt50",
+    "solver_steps": 5,
+    "rows_per_model": 500,
+    "episode_limit_primitive_steps": 160,
+    "primary_metric": "success_once",
+    "metrics": ["success_once"],
+    "panel_asset_id": null,
+    "parameters": {
+      "camera_id": 2,
+      "matched_variants_per_task": 10,
+      "reset_settle_zero_actions": 15,
+      "tasks": 50
+    }
+  }
+}

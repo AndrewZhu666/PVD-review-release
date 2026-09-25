@@ -1,0 +1,318 @@
+{
+  "schema_version": "1.0",
+  "artifact_type": "historical_sealed_reference_results",
+  "method_names": {
+    "baseline": "Endpoint-DAgger",
+    "proposed": "Path-OPD"
+  },
+  "evidence": {
+    "level": "sealed_historical_report",
+    "integrity": "The source reports were covered by SHA-256 integrity ledgers.",
+    "current_release_rerun": false,
+    "scope": "Aggregate and per-training-seed metrics transcribed from sealed reports."
+  },
+  "benchmarks": {
+    "maniskill": {
+      "display_name": "ManiSkill",
+      "task": "PutOnPlateInScene25Main-v3",
+      "training_seed_count": 3,
+      "protocol": {
+        "training_solver_steps": 8,
+        "evaluation_solver_steps": 8,
+        "training_chunks": 80000,
+        "evaluation_rows_per_model": 320,
+        "evaluation_panel": "fixed_ten_point_panel"
+      },
+      "primary_metric": "success_once",
+      "per_seed": [
+        {
+          "training_seed": 0,
+          "endpoint_dagger": {
+            "success_once": {
+              "count": 225,
+              "total": 320,
+              "rate": 0.703125
+            },
+            "success_at_end": {
+              "count": 196,
+              "total": 320,
+              "rate": 0.6125
+            }
+          },
+          "path_opd": {
+            "success_once": {
+              "count": 264,
+              "total": 320,
+              "rate": 0.825
+            },
+            "success_at_end": {
+              "count": 242,
+              "total": 320,
+              "rate": 0.75625
+            }
+          },
+          "path_minus_dagger_success_once_percentage_points": 12.19
+        },
+        {
+          "training_seed": 1,
+          "endpoint_dagger": {
+            "success_once": {
+              "count": 236,
+              "total": 320,
+              "rate": 0.7375
+            },
+            "success_at_end": {
+              "count": 219,
+              "total": 320,
+              "rate": 0.684375
+            }
+          },
+          "path_opd": {
+            "success_once": {
+              "count": 265,
+              "total": 320,
+              "rate": 0.828125
+            },
+            "success_at_end": {
+              "count": 241,
+              "total": 320,
+              "rate": 0.753125
+            }
+          },
+          "path_minus_dagger_success_once_percentage_points": 9.06
+        },
+        {
+          "training_seed": 2,
+          "endpoint_dagger": {
+            "success_once": {
+              "count": 237,
+              "total": 320,
+              "rate": 0.740625
+            },
+            "success_at_end": {
+              "count": 214,
+              "total": 320,
+              "rate": 0.66875
+            }
+          },
+          "path_opd": {
+            "success_once": {
+              "count": 266,
+              "total": 320,
+              "rate": 0.83125
+            },
+            "success_at_end": {
+              "count": 246,
+              "total": 320,
+              "rate": 0.76875
+            }
+          },
+          "path_minus_dagger_success_once_percentage_points": 9.06
+        }
+      ],
+      "pooled_primary_metric": {
+        "endpoint_dagger": {
+          "count": 698,
+          "total": 960,
+          "rate": 0.7271
+        },
+        "path_opd": {
+          "count": 795,
+          "total": 960,
+          "rate": 0.8281
+        },
+        "path_minus_dagger_percentage_points": 10.1
+      },
+      "coverage": {
+        "complete": true,
+        "structural_error_count": 0
+      }
+    },
+    "calvin_abc_d": {
+      "display_name": "CALVIN ABC-D",
+      "training_seed_count": 3,
+      "protocol": {
+        "evaluation": "Official-D",
+        "sequences_per_model": 1000,
+        "sequence_length": 5
+      },
+      "primary_metric": "average_completed_sequence_length",
+      "secondary_metrics": [
+        "SR1",
+        "SR2",
+        "SR3",
+        "SR4",
+        "SR5"
+      ],
+      "per_seed": [
+        {
+          "training_seed": 0,
+          "endpoint_dagger": {
+            "average_completed_sequence_length": 4.31,
+            "success_rates_percent": {
+              "SR1": 97.5,
+              "SR2": 92.7,
+              "SR3": 86.4,
+              "SR4": 80.4,
+              "SR5": 74.0
+            }
+          },
+          "path_opd": {
+            "average_completed_sequence_length": 4.5,
+            "success_rates_percent": {
+              "SR1": 98.9,
+              "SR2": 95.4,
+              "SR3": 90.7,
+              "SR4": 86.0,
+              "SR5": 79.0
+            }
+          },
+          "path_minus_dagger": {
+            "average_completed_sequence_length": 0.19,
+            "SR5_percentage_points": 5.0
+          }
+        },
+        {
+          "training_seed": 1,
+          "endpoint_dagger": {
+            "average_completed_sequence_length": 4.29,
+            "success_rates_percent": {
+              "SR1": 96.9,
+              "SR2": 92.3,
+              "SR3": 86.1,
+              "SR4": 80.6,
+              "SR5": 73.1
+            }
+          },
+          "path_opd": {
+            "average_completed_sequence_length": 4.452,
+            "success_rates_percent": {
+              "SR1": 98.6,
+              "SR2": 94.4,
+              "SR3": 89.4,
+              "SR4": 84.3,
+              "SR5": 78.5
+            }
+          },
+          "path_minus_dagger": {
+            "average_completed_sequence_length": 0.162,
+            "SR5_percentage_points": 5.4
+          }
+        },
+        {
+          "training_seed": 2,
+          "endpoint_dagger": {
+            "average_completed_sequence_length": 4.298,
+            "success_rates_percent": {
+              "SR1": 97.1,
+              "SR2": 92.2,
+              "SR3": 86.2,
+              "SR4": 81.1,
+              "SR5": 73.2
+            }
+          },
+          "path_opd": {
+            "average_completed_sequence_length": 4.486,
+            "success_rates_percent": {
+              "SR1": 98.8,
+              "SR2": 95.1,
+              "SR3": 90.3,
+              "SR4": 85.4,
+              "SR5": 79.0
+            }
+          },
+          "path_minus_dagger": {
+            "average_completed_sequence_length": 0.188,
+            "SR5_percentage_points": 5.8
+          }
+        }
+      ],
+      "training_seed_mean": {
+        "endpoint_dagger": {
+          "average_completed_sequence_length": 4.299,
+          "SR5_percent": 73.43
+        },
+        "path_opd": {
+          "average_completed_sequence_length": 4.479,
+          "SR5_percent": 78.83
+        },
+        "path_minus_dagger": {
+          "average_completed_sequence_length": 0.18,
+          "SR5_percentage_points": 5.4
+        }
+      },
+      "inference_note": "Three training seeds provide descriptive replication; sequence-level paired uncertainty is not training-seed uncertainty."
+    },
+    "metaworld_mt50": {
+      "display_name": "MetaWorld MT50",
+      "training_seed_count": 2,
+      "protocol": {
+        "solver_steps": 5,
+        "action_horizon": 5,
+        "execution_prefix": 5,
+        "episode_limit_primitive_steps": 160,
+        "tasks": 50,
+        "matched_variants_per_task": 10,
+        "evaluation_rows_per_model": 500
+      },
+      "primary_metric": "success_once",
+      "per_seed": [
+        {
+          "training_seed": 0,
+          "endpoint_dagger": {
+            "count": 326,
+            "total": 500,
+            "rate": 0.652
+          },
+          "path_opd": {
+            "count": 375,
+            "total": 500,
+            "rate": 0.75
+          },
+          "path_minus_dagger_percentage_points": 9.8,
+          "paired_task_cluster_bootstrap_95ci_percentage_points": [
+            4.4,
+            15.6
+          ]
+        },
+        {
+          "training_seed": 1,
+          "endpoint_dagger": {
+            "count": 281,
+            "total": 500,
+            "rate": 0.562
+          },
+          "path_opd": {
+            "count": 352,
+            "total": 500,
+            "rate": 0.704
+          },
+          "path_minus_dagger_percentage_points": 14.2,
+          "paired_task_cluster_bootstrap_95ci_percentage_points": [
+            8.0,
+            21.0
+          ]
+        }
+      ],
+      "pooled_primary_metric": {
+        "endpoint_dagger": {
+          "count": 607,
+          "total": 1000,
+          "rate": 0.607
+        },
+        "path_opd": {
+          "count": 727,
+          "total": 1000,
+          "rate": 0.727
+        },
+        "path_minus_dagger_percentage_points": 12.0
+      },
+      "coverage": {
+        "complete": true,
+        "identity_mismatch_count": 0,
+        "exception_count": 0
+      },
+      "inference_note": "Bootstrap intervals condition on each trained pair and fixed evaluation panel; they are not training-seed uncertainty intervals."
+    }
+  }
+}

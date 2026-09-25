@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "benchmark": "calvin_abc_d",
+  "display_name": "CALVIN ABC-D",
+  "task": "ABC-D Official-D",
+  "assets_manifest": "assets/calvin_abc_d.json",
+  "training": {
+    "methods": ["endpoint_dagger", "path_opd"],
+    "seeds": [0, 1, 2],
+    "world_size": 8,
+    "per_rank_batch_size": 1,
+    "global_batch_size": 8,
+    "fresh_chunks": 80000,
+    "optimizer_updates": 10000,
+    "environment_action_steps": 400000,
+    "replay": false,
+    "presentations_per_chunk": 1,
+    "checkpoint_chunks": [10000, 20000, 40000, 60000, 80000],
+    "rank_seed_strategy": "training_seed_plus_rank_multiple",
+    "rank_seed_multiplier": 1,
+    "optimizer": {
+      "name": "adamw",
+      "learning_rate": 0.00000791,
+      "betas": [0.9, 0.95],
+      "epsilon": 0.00001,
+      "weight_decay": 0.01,
+      "global_gradient_clip_norm": 1.0
+    }
+  },
+  "flow": {
+    "solver": "euler",
+    "student_steps": 8,
+    "teacher_steps": 8
+  },
+  "action": {
+    "model_horizon": 5,
+    "model_dimensions": 32,
+    "execution_prefix": 5,
+    "physical_dimensions": 7
+  },
+  "supervision": {
+    "student_path_states": "pre_transition",
+    "exclude_endpoint": true,
+    "detach_student_path": true,
+    "teacher_query": "same_student_states_and_times",
+    "time_weighting": "uniform",
+    "teacher_frozen": true,
+    "teacher_eval": true,
+    "teacher_gradients": false,
+    "teacher_actor_only": true,
+    "trainable_scope": "action_expert_only",
+    "dagger_target": "teacher_rollout_endpoint",
+    "dagger_loss": "native_conditional_flow_matching"
+  },
+  "evaluation": {
+    "protocol": "official_d",
+    "solver_steps": 8,
+    "rows_per_model": 1000,
+    "episode_limit_primitive_steps": 360,
+    "primary_metric": "average_completed_sequence_length",
+    "metrics": [
+      "average_completed_sequence_length",
+      "SR1",
+      "SR2",
+      "SR3",
+      "SR4",
+      "SR5"
+    ],
+    "panel_asset_id": "official_d_panel",
+    "parameters": {
+      "action_repeat": 8,
+      "bootstrap_draws": 10000,
+      "bootstrap_seed": 20260819,
+      "cameras": ["rgb_static", "rgb_gripper"],
+      "controller_frequency_hz": 30,
+      "scene": "D",
+      "sequence_length": 5,
+      "sequences": 1000,
+      "simulation_frequency_hz": 240
+    }
+  }
+}
